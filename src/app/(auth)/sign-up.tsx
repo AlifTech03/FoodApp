@@ -1,9 +1,10 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native';
-import React from 'react';
-import { object, string } from 'yup';
+import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useState } from 'react';
+import { object, string, StringSchema } from 'yup';
 import { Formik } from 'formik';
 import { Button } from '@/src/components/Button';
 import { router } from 'expo-router';
+import { supabase } from '@/src/utils/supabase';
 
 const ValidationSchema = object({
   email: string()
@@ -19,9 +20,24 @@ const ValidationSchema = object({
     .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character'), // Special character requirement
 });
 const SignUp = () => {
+  const [loading, setLoading] = useState(false);
+  const handleSignUp = async (values: { email: string; password: string }) => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+      });
+      if (error) Alert.alert(error.message);
+    } catch (error) {
+      throw new Error(error as string);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <View className="flex-1 justify-center p-3">
-      <Text className='text-xl mb-5 font-[Poppins-Regular] '>Welcome to Food-APP</Text>
+      <Text className="mb-5 font-[Poppins-Regular] text-xl ">Welcome to Food-APP</Text>
       <Formik
         initialValues={{
           email: '',
@@ -29,7 +45,7 @@ const SignUp = () => {
         }}
         validationSchema={ValidationSchema}
         onSubmit={(values) => {
-          console.log(values);
+          handleSignUp(values);
         }}>
         {({ handleChange, handleBlur, handleSubmit, errors, values, touched }) => (
           <>
@@ -56,16 +72,23 @@ const SignUp = () => {
                 value={values.password}
                 onChangeText={handleChange('password')}
                 onBlur={handleBlur('password')}
+                secureTextEntry
               />
               {touched.password && errors.password && (
                 <Text className="px-2 font-semibold text-red-600">{errors.password}</Text>
               )}
             </View>
             <Button
-             className='mt-5 mb-3 bg-blue-900'
-              title='Create an account'
+              className={`mb-3 mt-5 ${loading? "bg-blue-950": "bg-blue-900"}`}
+              title={loading ? 'Creating an account ...' : 'Create an account'}
+              onPress={() => handleSubmit()}
+              disabled={loading}
             />
-            <Text className='font-bold text-blue-800 text-center' onPress={() => router.navigate('/(auth)/sign-in')}>Sign in</Text>
+            <Text
+              className="text-center font-bold text-blue-800"
+              onPress={() => router.navigate('/(auth)/sign-in')}>
+              Sign in
+            </Text>
           </>
         )}
       </Formik>

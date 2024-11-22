@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { JsStack } from '../layouts/js-stack';
 import { TransitionPresets } from '@react-navigation/stack';
 import { CartProvider } from '../providers/CartProvider';
+import AuthProvider from '../providers/AuthProvider';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -28,9 +29,11 @@ export default function RootLayout() {
   }
 
   return (
-    <CartProvider>
-      <RootLayoutNav />
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <RootLayoutNav />
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
@@ -48,7 +51,7 @@ function RootLayoutNav() {
           ...TransitionPresets.ModalPresentationIOS,
           headerTitleAlign: 'center',
         }}
-      /> 
+      />
     </JsStack>
   );
 }

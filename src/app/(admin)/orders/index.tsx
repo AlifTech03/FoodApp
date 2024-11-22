@@ -1,3 +1,5 @@
+import ActiveOrders from '@/src/components/ActiveOrders';
+import ArchieveOrders from '@/src/components/ArchieveOrders';
 import OrderListItem from '@/src/components/OrderListItem';
 import orders from '@/src/constants/data/orders';
 import { Stack } from 'expo-router';
@@ -6,39 +8,17 @@ import { StyleSheet, View, FlatList, useWindowDimensions } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 export default function Home() {
-  const Active = () => (
-    <FlatList
-      data={orders}
-      renderItem={({ item }) => <OrderListItem order={item} />}
-      keyExtractor={(item) => String(item.id)}
-      contentContainerStyle={{
-        padding: 10,
-        gap: 10,
-      }}
-    />
-  );
-  const Archieve = () => (
-    <FlatList
-      data={orders}
-      renderItem={({ item }) => <OrderListItem order={item} />}
-      keyExtractor={(item) => String(item.id)}
-      contentContainerStyle={{
-        padding: 10,
-        gap: 10,
-      }}
-    />
-  );
 
   const renderScene = SceneMap({
-    Active,
-    Archieve,
+    ActiveOrders,
+    ArchieveOrders,
   });
   const layout = useWindowDimensions();
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: 'Active', title: 'Active' },
-    { key: 'Archieve', title: 'Archieve' },
+    { key: 'ActiveOrders', title: 'Active' },
+    { key: 'ArchieveOrders', title: 'Archieve' },
   ]);
 
   return (
