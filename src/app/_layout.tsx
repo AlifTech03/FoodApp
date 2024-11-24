@@ -6,6 +6,7 @@ import { JsStack } from '../layouts/js-stack';
 import { TransitionPresets } from '@react-navigation/stack';
 import { CartProvider } from '../providers/CartProvider';
 import AuthProvider from '../providers/AuthProvider';
+import QueryProvider from '../providers/QueryProvider';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -30,9 +31,11 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <CartProvider>
-        <RootLayoutNav />
-      </CartProvider>
+      <QueryProvider>
+        <CartProvider>
+          <RootLayoutNav />
+        </CartProvider>
+      </QueryProvider>
     </AuthProvider>
   );
 }

@@ -2,6 +2,8 @@ import { View, Text } from 'react-native';
 import React from 'react';
 import { Link, Stack } from 'expo-router';
 import { TabBarIcon } from '@/src/components/TabBarIcon';
+import { supabase } from '@/src/utils/supabase';
+import { Button } from '@/src/components/Button';
 
 const MenuLayout = () => {
   return (

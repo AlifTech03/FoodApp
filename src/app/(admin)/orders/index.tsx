@@ -1,10 +1,8 @@
 import ActiveOrders from '@/src/components/ActiveOrders';
 import ArchieveOrders from '@/src/components/ArchieveOrders';
-import OrderListItem from '@/src/components/OrderListItem';
-import orders from '@/src/constants/data/orders';
 import { Stack } from 'expo-router';
 import React from 'react';
-import { StyleSheet, View, FlatList, useWindowDimensions } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 export default function Home() {

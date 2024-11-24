@@ -1,9 +1,22 @@
 import ProductItem from '@/src/components/ProductItem';
-import products from '@/src/constants/data/products';
+import { useProductList } from '@/src/hooks/useProducts';
 import React from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, ActivityIndicator, Text } from 'react-native';
 
 export default function Home() {
+  const {
+    data: products,
+    error,
+    isLoading,
+  } = useProductList();
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Falied to get load data!</Text>;
+  }
   return (
     <View>
       <FlatList

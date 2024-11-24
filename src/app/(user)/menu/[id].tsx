@@ -1,17 +1,18 @@
-import { View, Text, Image, Pressable, TouchableOpacity } from 'react-native';
+import { View, Text, Image, Pressable, TouchableOpacity, ActivityIndicator } from 'react-native';
 import React, { useState } from 'react';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import products from '@/src/constants/data/products';
 import { DeafultImage } from '@/src/components/ProductItem';
 import { useCart } from '@/src/providers/CartProvider';
 import { PizzaSize } from '@/src/constants/types';
+import { useProduct } from '@/src/hooks/useProducts';
 
 const ProductDetails = () => {
   const { addToCart } = useCart();
   const { id } = useLocalSearchParams();
   const [select, setSelect] = useState<PizzaSize>('M');
 
-  const product = products.find((product) => product.id.toString() === id);
+  const { data: product, error, isLoading } = useProduct(Number(id));
   const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 
   const addItems = () => {
@@ -19,6 +20,14 @@ const ProductDetails = () => {
     addToCart(product, select);
     router.push('/cart');
   };
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Falied to get load data!</Text>;
+  }
   return (
     <View className="flex-1">
       <Stack.Screen

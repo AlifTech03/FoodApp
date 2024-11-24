@@ -11,7 +11,7 @@ const MenuLayout = () => {
         options={{
           headerTitle: 'Menu',
           headerRight: () => (
-            <Link href={"./menu/create"}>
+            <Link href={"/(admin)/menu/create"}>
               <TabBarIcon color="#016492" name="plus-square-o" />
             </Link>
           ),

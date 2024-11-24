@@ -1,10 +1,10 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 import React from 'react';
-import { Product } from '../constants/types';
 import { Link } from 'expo-router';
+import { Tables } from '../database.types';
 
 type ProductItemProp = {
-  product: Product;
+  product: Tables<'products'>;
 };
 
 export const DeafultImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';

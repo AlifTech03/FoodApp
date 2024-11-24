@@ -1,26 +1,36 @@
 import ProductItem from '@/src/components/ProductItem';
-import products from '@/src/constants/data/products';
-import { Stack } from 'expo-router';
+import { useProductList } from '@/src/hooks/useProducts';
 import React from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, ActivityIndicator, Text } from 'react-native';
 
 export default function Home() {
+  const {
+    data: products,
+    error,
+    isLoading,
+  } = useProductList();
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Falied to get load data!</Text>;
+  }
   return (
     <View>
       <FlatList
         data={products}
-        renderItem={({item})=> (
-          <ProductItem product = {item}/>
-        )}
+        renderItem={({ item }) => <ProductItem product={item} />}
         numColumns={2}
         contentContainerStyle={{
-          padding:10,
-          gap:10
+          padding: 10,
+          gap: 10,
         }}
         columnWrapperStyle={{
-          gap:10
+          gap: 10,
         }}
-        keyExtractor={(item) => (`${item.id}`)}
+        keyExtractor={(item) => `${item.id}`}
       />
     </View>
   );

@@ -1,16 +1,22 @@
-import { View, Text, Image, Pressable, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
-import { Link, router, Stack, useLocalSearchParams } from 'expo-router';
-import products from '@/src/constants/data/products';
+import { View, Text, Image, ActivityIndicator } from 'react-native';
+import React from 'react';
+import { Link, Stack, useLocalSearchParams } from 'expo-router';
 import { DeafultImage } from '@/src/components/ProductItem';
-import { useCart } from '@/src/providers/CartProvider';
-import { PizzaSize } from '@/src/constants/types';
 import { TabBarIcon } from '@/src/components/TabBarIcon';
+import { useProduct } from '@/src/hooks/useProducts';
 
 const ProductDetails = () => {
   const { id } = useLocalSearchParams();
 
-  const product = products.find((product) => product.id.toString() === id);
+  const { data: product, error, isLoading } = useProduct(parseInt(typeof id === 'string' ? id : id[0]));
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Falied to get load data!</Text>;
+  }
 
   return (
     <View className="flex-1">
@@ -26,10 +32,7 @@ const ProductDetails = () => {
               href={{
                 pathname: `./create`,
                 params: {
-                  id,
-                  name: product?.name,
-                  price: product?.price,
-                  image: product?.image,
+                  id
                 },
               }}>
               <TabBarIcon color="#016492" name="pencil" />

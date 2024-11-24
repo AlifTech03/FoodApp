@@ -1,7 +1,13 @@
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import { TabBarIcon } from '../../components/TabBarIcon';
+import { useAuth } from '@/src/providers/AuthProvider';
 
 export default function TabLayout() {
+  const { profile} = useAuth()
+  
+  if (!profile || profile.role !== 'ADMIN') {
+    return <Redirect href="/" />;
+  }
   return (
     <Tabs
       screenOptions={{

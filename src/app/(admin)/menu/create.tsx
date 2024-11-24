@@ -1,21 +1,28 @@
-import { Alert, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Pressable, Text, TextInput, View } from 'react-native';
 import React from 'react';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { mixed, number, object, string } from 'yup';
 import { Formik } from 'formik';
 import { Button } from '@/src/components/Button';
 import * as ImagePicker from 'expo-image-picker';
 import { DeafultImage } from '@/src/components/ProductItem';
+import { useDeleteProduct, useInsertproduct, useProduct, useUpdateproduct } from '@/src/hooks/useProducts';
 
 const CreatePizzaSchema = object({
-  image: mixed().required('image is required'),
+  image: mixed().nullable(),
   name: string().required('Name is required'),
   price: number().required('Price is requied'),
 });
 
 const Create = () => {
-  const { id, name, price, image } = useLocalSearchParams();
-  const isUpdating = !!id;
+  const { id: idString } = useLocalSearchParams();
+  
+  const id = idString ? parseFloat(typeof idString === 'string' ? idString : idString[0]): undefined;
+  const { data: product } = useProduct(id)
+  const isUpdating = !!id;        
+  const { mutate: insertProduct } = useInsertproduct();
+  const { mutate: updateProduct } = useUpdateproduct();
+  const { mutate: deleteProduct } = useDeleteProduct();
 
   const pickImageAsync = async (setFieldValue: any) => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -32,19 +39,20 @@ const Create = () => {
     }
   };
 
-  const deletProduct = () => {
-    console.warn("delete");
-    
-  }
+  const ondeletProduct = () => {
+    deleteProduct(id);
+    router.replace('/(admin)/menu/')
+  };
   const deleteConfirmation = () => {
     Alert.alert('Confirm', 'You want to delete this product', [
       {
         text: 'Cancel',
-      },{
+      },
+      {
         text: 'Delete',
-        onPress: (deletProduct),
-        style: 'destructive'
-      }
+        onPress: ondeletProduct,
+        style: 'destructive',
+      },
     ]);
   };
   return (
@@ -57,13 +65,42 @@ const Create = () => {
       />
       <Formik
         initialValues={{
-          name: name ? (name as string) : '',
-          price: price ? (price as string) : '',
-          image: image ? (image as string) : null,
+          name: product?.name,
+          price: product?.price,
+          image: product?.image,
         }}
         validationSchema={CreatePizzaSchema}
         onSubmit={(values, actions) => {
-          console.log(values);
+          if (isUpdating) {
+            console.log("update", values);
+            updateProduct(
+              {
+                id,
+                name: values.name,
+                price: values.price,
+                image: values.image,
+              },
+              {
+                onSuccess: () => {
+                  router.back();
+                },
+              }
+            );
+          } else {
+            insertProduct(
+              {
+                name: values.name!,
+                price: values.price!,
+                image: values.image,
+              },
+              {
+                onSuccess: () => {
+                  actions.resetForm();
+                  router.back();
+                },
+              }
+            );
+          }
         }}>
         {({ handleChange, handleSubmit, handleBlur, errors, values, touched, setFieldValue }) => (
           <>
@@ -72,7 +109,7 @@ const Create = () => {
                 <Image
                   className="aspect-square w-1/2 rounded-full"
                   source={{
-                    uri: values.image ? values.image : image ? (image as string) : DeafultImage,
+                    uri: values.image ? values.image : DeafultImage,
                   }}
                   resizeMode="cover"
                 />
@@ -88,7 +125,7 @@ const Create = () => {
               <Text className="py-2 text-lg font-semibold">Name</Text>
               <TextInput
                 className="rounded-lg border border-gray-500 bg-white px-4 py-3 font-[Poppins-Regular] text-lg"
-                placeholder={name ? (name as string) : 'Name'}
+                placeholder={'Name'}
                 placeholderTextColor={'gray'}
                 value={values.name}
                 onChangeText={handleChange('name')}
@@ -102,11 +139,11 @@ const Create = () => {
               <Text className="py-2 text-lg font-semibold">Price($)</Text>
               <TextInput
                 className="rounded-lg border border-gray-500 bg-white px-4 py-3 font-[Poppins-Regular] text-lg"
-                placeholder={price ? (price as string) : '9.99'}
+                placeholder={'9.99'}
                 placeholderTextColor={'gray'}
                 placeholderClassName="font-bold"
                 keyboardType="numeric"
-                value={values.price}
+                value={values.price?.toString()}
                 onChangeText={handleChange('price')}
                 onBlur={handleBlur('price')}
               />
@@ -122,9 +159,11 @@ const Create = () => {
                 backgroundColor: '#016492',
               }}
             />
-           {isUpdating && <Pressable onPress={deleteConfirmation} className='items-center mt-3'>
-              <Text className="font-semibold text-blue-900 text-lg">Delete</Text>
-            </Pressable>}
+            {isUpdating && (
+              <Pressable onPress={deleteConfirmation} className="mt-3 items-center">
+                <Text className="text-lg font-semibold text-blue-900">Delete</Text>
+              </Pressable>
+            )}
           </>
         )}
       </Formik>
@@ -133,5 +172,3 @@ const Create = () => {
 };
 
 export default Create;
-
-const styles = StyleSheet.create({});
