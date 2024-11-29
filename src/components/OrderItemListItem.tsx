@@ -1,9 +1,10 @@
 import { View, Text, Image } from 'react-native';
 import React from 'react';
-import { OrderItem } from '../constants/types';
+import { Tables } from '../database.types';
+import { DeafultImage } from './ProductItem';
 
 type orderItemProps = {
-    orderItem: OrderItem
+    orderItem: {products: Tables<'products'>} & Tables<'order_item'>
 }
 
 const OrderItemListItem = ({orderItem}: orderItemProps) => {
@@ -12,7 +13,7 @@ const OrderItemListItem = ({orderItem}: orderItemProps) => {
       <View className="flex-1 flex-row items-center gap-3">
         <Image
           className="aspect-square w-20 rounded-full"
-          source={{ uri: orderItem.products.image! }}
+          source={{ uri: orderItem.products.image || DeafultImage }}
           resizeMode="contain"
         />
         <View>

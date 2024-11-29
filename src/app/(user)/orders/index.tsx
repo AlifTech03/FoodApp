@@ -1,11 +1,19 @@
 import OrderListItem from '@/src/components/OrderListItem';
-import { ScreenContent } from '@/src/components/ScreenContent';
 import orders from '@/src/constants/data/orders';
+import { useMyorder } from '@/src/hooks/useOrders';
 import { Stack } from 'expo-router';
 import React from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, ActivityIndicator, Text } from 'react-native';
 
 export default function Home() {
+  const {data: orders, error, isLoading} = useMyorder()
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Falied to get load data!</Text>;
+  }
   return (
     <View>
       <Stack.Screen

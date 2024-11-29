@@ -51,9 +51,7 @@ export const useInsertproduct = () => {
 export const useUpdateproduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async ({ id, ...update }: TablesUpdate<'products'>) => {
-            console.log({update});
-            
+        mutationFn: async ({ id, ...update }: TablesUpdate<'products'>) => {   
             const { data: updateProduct, error } = await supabase.from("products").update(update).eq('id', id!).select().single()
             if (error) {
                 throw new Error(error.message)

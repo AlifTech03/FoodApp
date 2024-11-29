@@ -7,13 +7,16 @@ import { supabase } from '../utils/supabase';
 
 const index = () => {
   const { loading, session, profile } = useAuth();
-  if (loading) {
+  
+  console.log(profile);
+  
+  if (loading && !profile) {
     return <ActivityIndicator />;
   }
   if (!session) {
     return <Redirect href={'/(auth)/sign-in'} />;
   }
-  if (profile && profile?.role === 'ADMIN') {
+  if (profile?.role === 'ADMIN') {
     return (
       <View style={{ flex: 1, justifyContent: 'center', padding: 10, gap: 5 }}>
         <Link href={'./(user)/menu/'} asChild>

@@ -1,23 +1,39 @@
-import { StyleSheet, Text, View, FlatList, Image, Pressable } from 'react-native';
-import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
+import React from 'react';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import orders from '@/src/constants/data/orders';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import OrderItemListItem from '@/src/components/OrderItemListItem';
 import OrderListItem from '@/src/components/OrderListItem';
-import { OrderStatus, OrderStatusList } from '@/src/constants/types';
+import { useOrderDetails } from '@/src/hooks/useOrders';
+import OrderListFooter from '@/src/components/orderListFooter';
 
 dayjs.extend(relativeTime);
 
 const OrderDetails = () => {
   const { id } = useLocalSearchParams();
-  const order = orders.find((item) => item.id.toString() === id);
-  const [selectStatus, setSelectStatus] = useState(order?.status);
+  const {
+    data: order,
+    isLoading,
+    error,
+  } = useOrderDetails(parseInt(typeof id === 'string' ? id : id[0]));
 
-  if (!order) {
-    return <Text>Not found...</Text>;
+  
+  if (isLoading) {
+    return <ActivityIndicator />;
   }
+
+  if (error || !order) {
+    return <Text>Falied to get load data!</Text>;
+  }
+
+  
 
   return (
     <View className="flex-1">
@@ -34,20 +50,11 @@ const OrderDetails = () => {
       />
 
       <FlatList
-        data={order?.order_items}
+        data={order?.order_item}
         renderItem={({ item }) => <OrderItemListItem orderItem={item} />}
         ListHeaderComponent={() => <OrderListItem order={order} />}
         ListFooterComponent={() => (
-          <View className="mt-5 flex-row">
-            {OrderStatusList.map((item) => (
-              <Pressable
-                key={item}
-                className={`mx-2 items-center justify-center rounded-lg border border-blue-900 px-3 py-1 ${item===selectStatus? "bg-blue-900": null}`}
-                onPress={() => setSelectStatus(item)}>
-                <Text className={`font-[Poppins-Regular] ${item===selectStatus? "text-white": "text-blue-900"}`}>{item}</Text>
-              </Pressable>
-            ))}
-          </View>
+          <OrderListFooter order={order}/>
         )}
         keyExtractor={(item) => String(item.id)}
         ListHeaderComponentStyle={{
