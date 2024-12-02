@@ -29,7 +29,7 @@ const index = () => {
       </View>
     );
   }
-  return <Redirect href={'/(user)/'} />;
+  return <Redirect href={'/(user)'} />;
 };
 
 export default index;

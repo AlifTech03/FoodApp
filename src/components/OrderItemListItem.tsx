@@ -4,10 +4,13 @@ import { Tables } from '../database.types';
 import { DeafultImage } from './ProductItem';
 
 type orderItemProps = {
-    orderItem: {products: Tables<'products'>} & Tables<'order_item'>
-}
+  orderItem: Tables<'order_item'> & { products: Tables<'products'> | null };
+};
 
-const OrderItemListItem = ({orderItem}: orderItemProps) => {
+const OrderItemListItem = ({ orderItem }: orderItemProps) => {
+  if (!orderItem.products) {
+    return <Text> There is something worng! </Text>;
+  }
   return (
     <View className="flex-row items-center justify-center rounded-lg bg-white  p-3 shadow-sm shadow-black">
       <View className="flex-1 flex-row items-center gap-3">

@@ -4,6 +4,7 @@
     "slug": "foodapp",
     "version": "1.0.0",
     "scheme": "foodapp",
+    "newArchEnabled": true,
     "web": {
       "bundler": "metro",
       "output": "static",

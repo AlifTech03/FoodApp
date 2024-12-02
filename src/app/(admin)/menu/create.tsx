@@ -8,6 +8,11 @@ import * as ImagePicker from 'expo-image-picker';
 import { DeafultImage } from '@/src/components/ProductItem';
 import { useDeleteProduct, useInsertproduct, useProduct, useUpdateproduct } from '@/src/hooks/useProducts';
 
+import * as FileSystem from 'expo-file-system';
+import { randomUUID } from 'expo-crypto';
+import { decode } from 'base64-arraybuffer';
+import { supabase } from '@/src/utils/supabase';
+
 const CreatePizzaSchema = object({
   image: mixed().nullable(),
   name: string().required('Name is required'),
@@ -26,7 +31,7 @@ const Create = () => {
 
   const pickImageAsync = async (setFieldValue: any) => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       aspect: [16, 9],
       quality: 1,
     });
@@ -55,6 +60,24 @@ const Create = () => {
       },
     ]);
   };
+  const uploadImage = async (image: string| null) => {
+    if (!image?.startsWith('file://')) {
+      return;
+    }
+  
+    const base64 = await FileSystem.readAsStringAsync(image, {
+      encoding: 'base64',
+    });
+    const filePath = `${randomUUID()}.png`;
+    const contentType = 'image/png';
+    const { data, error } = await supabase.storage
+      .from('product-image')
+      .upload(filePath, decode(base64), { contentType });
+  
+    if (data) {
+      return data.path;
+    }
+  };
   return (
     <View className="flex-1 justify-center p-5">
       <Stack.Screen
@@ -72,7 +95,7 @@ const Create = () => {
         validationSchema={CreatePizzaSchema}
         onSubmit={(values, actions) => {
           if (isUpdating) {
-            console.log("update", values);
+            uploadImage(values.image!),
             updateProduct(
               {
                 id,
@@ -87,6 +110,7 @@ const Create = () => {
               }
             );
           } else {
+            uploadImage(values.image!)
             insertProduct(
               {
                 name: values.name!,

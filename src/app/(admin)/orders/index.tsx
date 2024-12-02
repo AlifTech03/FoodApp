@@ -1,5 +1,6 @@
 import ActiveOrders from '@/src/components/ActiveOrders';
 import ArchieveOrders from '@/src/components/ArchieveOrders';
+import { useOrerSubscribe } from '@/src/hooks/subscription';
 import { Stack } from 'expo-router';
 import React from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
@@ -19,7 +20,7 @@ export default function Home() {
     { key: 'ArchieveOrders', title: 'Archieve' },
   ]);
 
-  
+  useOrerSubscribe();
 
   return (
     <View className="flex-1">
@@ -40,10 +41,7 @@ export default function Home() {
             indicatorStyle={{
               backgroundColor: '#016492',
             }}
-            labelStyle={{
-              color: 'black',
-            }}
-            activeColor="black"
+            activeColor="#016492"
             inactiveColor="gray"
           />
         )}

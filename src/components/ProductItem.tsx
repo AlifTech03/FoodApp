@@ -12,9 +12,9 @@ export const DeafultImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com
 const ProductItem = ({ product }: ProductItemProp) => {
   return (
     <Link href={`/menu/${product.id}`} asChild>
-      <Pressable className="max-w-[50%] flex-1 rounded-lg bg-white p-4">
+      <Pressable className="max-w-[50%] flex-1 rounded-lg bg-white p-4 ">
         <Image
-          className="aspect-square w-full"
+          className="aspect-square w-full rounded-full"
           source={{
             uri: product.image || DeafultImage,
           }}

@@ -6,12 +6,17 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import OrderItemListItem from '@/src/components/OrderItemListItem';
 import OrderListItem from '@/src/components/OrderListItem';
 import { useOrderDetails } from '@/src/hooks/useOrders';
+import { useOrderUpdateSubscribe } from '@/src/hooks/subscription';
 
 dayjs.extend(relativeTime);
 
-const OrderDetails = () => {
-  const { id } = useLocalSearchParams();
-  const {data: order, error, isLoading} = useOrderDetails(parseInt(typeof id === 'string' ? id : id[0]))
+const OrderDetails = () => { 
+  const { id: idString } = useLocalSearchParams();
+  const id = parseInt(typeof idString === 'string' ? idString : idString[0]);
+
+  const { data: order, error, isLoading } = useOrderDetails(id);
+
+  useOrderUpdateSubscribe(id);
 
   if (isLoading) {
     return <ActivityIndicator />;
@@ -45,7 +50,7 @@ const OrderDetails = () => {
         ListHeaderComponent={() => <OrderListItem order={order} />}
         keyExtractor={(item) => String(item.id)}
         ListHeaderComponentStyle={{
-          paddingBottom:10
+          paddingBottom: 10,
         }}
         contentContainerStyle={{
           padding: 10,
