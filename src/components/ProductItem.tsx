@@ -2,6 +2,7 @@ import { Image, Pressable, Text, View } from 'react-native';
 import React from 'react';
 import { Link } from 'expo-router';
 import { Tables } from '../database.types';
+import RemoteImage from './RemoteImgae';
 
 type ProductItemProp = {
   product: Tables<'products'>;
@@ -13,12 +14,11 @@ const ProductItem = ({ product }: ProductItemProp) => {
   return (
     <Link href={`/menu/${product.id}`} asChild>
       <Pressable className="max-w-[50%] flex-1 rounded-lg bg-white p-4 ">
-        <Image
+        <RemoteImage
           className="aspect-square w-full rounded-full"
-          source={{
-            uri: product.image || DeafultImage,
-          }}
-          resizeMode="contain"
+          path={product.image!}
+          fallback={DeafultImage}
+          resizeMode="cover"
         />
         <View className="pt-3 gap-2">
           <Text className="flex-1 font-bold text-xl">{product.name}</Text>

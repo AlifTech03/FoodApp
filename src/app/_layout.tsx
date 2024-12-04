@@ -42,7 +42,9 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <JsStack>
+    <JsStack screenOptions={{
+      animation: 'slide_from_bottom'
+    }}>
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(admin)" options={{ headerShown: false }} />
       <Stack.Screen name="(user)" options={{ headerShown: false }} />

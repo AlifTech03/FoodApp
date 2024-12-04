@@ -4,6 +4,7 @@ import { Link, Stack, useLocalSearchParams } from 'expo-router';
 import { DeafultImage } from '@/src/components/ProductItem';
 import { TabBarIcon } from '@/src/components/TabBarIcon';
 import { useProduct } from '@/src/hooks/useProducts';
+import RemoteImage from '@/src/components/RemoteImgae';
 
 const ProductDetails = () => {
   const { id } = useLocalSearchParams();
@@ -41,11 +42,10 @@ const ProductDetails = () => {
         }}
       />
       <View className="p-5">
-        <Image
+        <RemoteImage
           className="aspect-square w-[100%] "
-          source={{
-            uri: product?.image || DeafultImage,
-          }}
+          path={product?.image!}
+          fallback={DeafultImage}
         />
       </View>
       <View className="gap-3 px-4 pb-7">

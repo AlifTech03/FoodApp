@@ -4,6 +4,7 @@ import { CartItem } from '../constants/types';
 import { DeafultImage } from './ProductItem';
 import { FontAwesome } from '@expo/vector-icons';
 import { useCart } from '../providers/CartProvider';
+import RemoteImage from './RemoteImgae';
 
 type CarListProps = {
   cartItem: CartItem;
@@ -14,12 +15,11 @@ const CartListItem = ({ cartItem }: CarListProps) => {
   return (
     <View className="w-full flex-row rounded-lg bg-white p-3">
       <View className="flex-1 flex-row items-center gap-2">
-        <Image
-          className="aspect-square w-16"
-          source={{
-            uri: cartItem.product.image || DeafultImage,
-          }}
-          resizeMode="contain"
+        <RemoteImage
+          className="aspect-square w-16 rounded-full"
+          path={cartItem.product.image!}
+          fallback={DeafultImage}
+          resizeMode="cover"
         />
         <View className="gap-1">
           <Text className="text-lg font-semibold">{cartItem.product.name}</Text>

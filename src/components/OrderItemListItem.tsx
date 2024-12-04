@@ -2,6 +2,7 @@ import { View, Text, Image } from 'react-native';
 import React from 'react';
 import { Tables } from '../database.types';
 import { DeafultImage } from './ProductItem';
+import RemoteImage from './RemoteImgae';
 
 type orderItemProps = {
   orderItem: Tables<'order_item'> & { products: Tables<'products'> | null };
@@ -14,10 +15,11 @@ const OrderItemListItem = ({ orderItem }: orderItemProps) => {
   return (
     <View className="flex-row items-center justify-center rounded-lg bg-white  p-3 shadow-sm shadow-black">
       <View className="flex-1 flex-row items-center gap-3">
-        <Image
+        <RemoteImage
           className="aspect-square w-20 rounded-full"
-          source={{ uri: orderItem.products.image || DeafultImage }}
-          resizeMode="contain"
+          path={orderItem.products.image!}
+          fallback={ DeafultImage }
+          resizeMode="cover"
         />
         <View>
           <Text className="text-xl font-bold">{orderItem.products.name}</Text>

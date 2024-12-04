@@ -6,12 +6,18 @@ import { Formik } from 'formik';
 import { Button } from '@/src/components/Button';
 import * as ImagePicker from 'expo-image-picker';
 import { DeafultImage } from '@/src/components/ProductItem';
-import { useDeleteProduct, useInsertproduct, useProduct, useUpdateproduct } from '@/src/hooks/useProducts';
+import {
+  useDeleteProduct,
+  useInsertproduct,
+  useProduct,
+  useUpdateproduct,
+} from '@/src/hooks/useProducts';
 
 import * as FileSystem from 'expo-file-system';
 import { randomUUID } from 'expo-crypto';
 import { decode } from 'base64-arraybuffer';
 import { supabase } from '@/src/utils/supabase';
+import RemoteImage from '@/src/components/RemoteImgae';
 
 const CreatePizzaSchema = object({
   image: mixed().nullable(),
@@ -21,10 +27,12 @@ const CreatePizzaSchema = object({
 
 const Create = () => {
   const { id: idString } = useLocalSearchParams();
-  
-  const id = idString ? parseFloat(typeof idString === 'string' ? idString : idString[0]): undefined;
-  const { data: product } = useProduct(id)
-  const isUpdating = !!id;        
+
+  const id = idString
+    ? parseFloat(typeof idString === 'string' ? idString : idString[0])
+    : undefined;
+  const { data: product } = useProduct(id);
+  const isUpdating = !!id;
   const { mutate: insertProduct } = useInsertproduct();
   const { mutate: updateProduct } = useUpdateproduct();
   const { mutate: deleteProduct } = useDeleteProduct();
@@ -46,7 +54,7 @@ const Create = () => {
 
   const ondeletProduct = () => {
     deleteProduct(id);
-    router.replace('/(admin)/menu/')
+    router.replace('/(admin)/menu/');
   };
   const deleteConfirmation = () => {
     Alert.alert('Confirm', 'You want to delete this product', [
@@ -60,11 +68,11 @@ const Create = () => {
       },
     ]);
   };
-  const uploadImage = async (image: string| null) => {
+  const uploadImage = async (image: string | null) => {
     if (!image?.startsWith('file://')) {
       return;
     }
-  
+
     const base64 = await FileSystem.readAsStringAsync(image, {
       encoding: 'base64',
     });
@@ -73,7 +81,7 @@ const Create = () => {
     const { data, error } = await supabase.storage
       .from('product-image')
       .upload(filePath, decode(base64), { contentType });
-  
+
     if (data) {
       return data.path;
     }
@@ -93,15 +101,15 @@ const Create = () => {
           image: product?.image,
         }}
         validationSchema={CreatePizzaSchema}
-        onSubmit={(values, actions) => {
+        onSubmit={async (values, actions) => {
+          const imageUrl = await uploadImage(values.image!);
           if (isUpdating) {
-            uploadImage(values.image!),
             updateProduct(
               {
                 id,
                 name: values.name,
                 price: values.price,
-                image: values.image,
+                image: imageUrl,
               },
               {
                 onSuccess: () => {
@@ -110,12 +118,12 @@ const Create = () => {
               }
             );
           } else {
-            uploadImage(values.image!)
+            uploadImage(values.image!);
             insertProduct(
               {
                 name: values.name!,
                 price: values.price!,
-                image: values.image,
+                image: imageUrl,
               },
               {
                 onSuccess: () => {
@@ -130,13 +138,22 @@ const Create = () => {
           <>
             <View className="items-center">
               <Pressable onPress={() => pickImageAsync(setFieldValue)} className="my-3">
-                <Image
-                  className="aspect-square w-1/2 rounded-full"
-                  source={{
-                    uri: values.image ? values.image : DeafultImage,
-                  }}
-                  resizeMode="cover"
-                />
+                {isUpdating ? (
+                  <RemoteImage
+                    className="aspect-square w-1/2 rounded-full"
+                    path={values.image!}
+                    fallback={DeafultImage}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <Image
+                    className="aspect-square w-1/2 rounded-full"
+                    source={{
+                      uri: values.image ? values.image : DeafultImage,
+                    }}
+                    resizeMode="cover"
+                  />
+                )}
               </Pressable>
               <Pressable onPress={() => pickImageAsync(setFieldValue)}>
                 <Text className="text-lg font-semibold ">Select Image</Text>

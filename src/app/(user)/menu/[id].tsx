@@ -6,13 +6,18 @@ import { DeafultImage } from '@/src/components/ProductItem';
 import { useCart } from '@/src/providers/CartProvider';
 import { PizzaSize } from '@/src/constants/types';
 import { useProduct } from '@/src/hooks/useProducts';
+import RemoteImage from '@/src/components/RemoteImgae';
 
 const ProductDetails = () => {
   const { addToCart } = useCart();
   const { id } = useLocalSearchParams();
   const [select, setSelect] = useState<PizzaSize>('M');
 
+  console.log(id);
+  
   const { data: product, error, isLoading } = useProduct(Number(id));
+  console.log(product);
+  
   const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 
   const addItems = () => {
@@ -40,11 +45,10 @@ const ProductDetails = () => {
         }}
       />
       <View className="p-5">
-        <Image
+      <RemoteImage
           className="aspect-square w-[100%] "
-          source={{
-            uri: product?.image || DeafultImage,
-          }}
+          path={product?.image!}
+          fallback={DeafultImage}
         />
       </View>
       <View className="flex-1 px-4 pt-7">
