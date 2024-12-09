@@ -8,8 +8,6 @@ import { supabase } from '../utils/supabase';
 const index = () => {
   const { loading, session, profile } = useAuth();
   
-  console.log(profile);
-  
   if (loading && !profile) {
     return <ActivityIndicator />;
   }
