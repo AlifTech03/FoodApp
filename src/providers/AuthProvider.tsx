@@ -30,7 +30,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
             .select('*')
             .eq('id', session.user.id)
             .single();  
-          setProfile(data || null);
+          setProfile(data);
         }
       } catch (error) {
         throw new Error(error as string);

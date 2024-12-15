@@ -12,11 +12,8 @@ const ProductDetails = () => {
   const { addToCart } = useCart();
   const { id } = useLocalSearchParams();
   const [select, setSelect] = useState<PizzaSize>('M');
-
-  console.log(id);
   
   const { data: product, error, isLoading } = useProduct(Number(id));
-  console.log(product);
   
   const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 

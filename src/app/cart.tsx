@@ -17,24 +17,23 @@ const CartScreen = () => {
       <FlatList
         data={items}
         renderItem={({ item }) => <CartListItem cartItem={item} />}
-        ListFooterComponent={() => (
-          items.length > 0 &&  <View>
-            <Text className="text-lg font-bold">
-              Total: $<Text className="text-xl">{total}</Text>
-            </Text>
-            <Link href={`/(user)/orders/`} asChild>
+        ListFooterComponent={() =>
+          items.length > 0 && (
+            <View>
+              <Text className="text-lg font-bold">
+                Total: $<Text className="text-xl">{total}</Text>
+              </Text>
+
               <Button title="Checkout" className="mt-3" onPress={checkOrder} />
-            </Link>
-          </View>
-        )}
-        ListEmptyComponent={() =>
-          (
-            <View className="min-h-[85vh] flex-1 items-center justify-center">
-              <Text className="text-xl font-bold"> No items added yet ...</Text>
-              <Button title="Go Home" onPress={() => router.replace('/(user)/menu')} />
             </View>
           )
         }
+        ListEmptyComponent={() => (
+          <View className="min-h-[85vh] flex-1 items-center justify-center">
+            <Text className="text-xl font-bold"> No items added yet ...</Text>
+            <Button title="Go Home" onPress={() => router.replace('/(user)/menu')} />
+          </View>
+        )}
         contentContainerStyle={{
           gap: 7,
         }}

@@ -7,6 +7,7 @@ import { TransitionPresets } from '@react-navigation/stack';
 import { CartProvider } from '../providers/CartProvider';
 import AuthProvider from '../providers/AuthProvider';
 import QueryProvider from '../providers/QueryProvider';
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -30,21 +31,24 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <QueryProvider>
-        <CartProvider>
-          <RootLayoutNav />
-        </CartProvider>
-      </QueryProvider>
-    </AuthProvider>
+    <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''}>
+      <AuthProvider>
+        <QueryProvider>
+          <CartProvider>
+            <RootLayoutNav />
+          </CartProvider>
+        </QueryProvider>
+      </AuthProvider>
+    </StripeProvider>
   );
 }
 
 function RootLayoutNav() {
   return (
-    <JsStack screenOptions={{
-      animation: 'slide_from_bottom'
-    }}>
+    <JsStack
+      screenOptions={{
+        animation: 'slide_from_bottom',
+      }}>
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(admin)" options={{ headerShown: false }} />
       <Stack.Screen name="(user)" options={{ headerShown: false }} />

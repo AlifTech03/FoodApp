@@ -4,6 +4,7 @@ import { randomUUID } from 'expo-crypto';
 import { useCreateOrderItem, userCreateOrder } from '../hooks/useOrders';
 import { router } from 'expo-router';
 import { Tables } from '../database.types';
+import { initialPayment, openPaymentSheet } from '../utils/stripePayment';
 
 type CartContextType = {
   items: CartItem[];
@@ -53,7 +54,10 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
         .filter((item) => item.quantity > 0)
     );
   };
-  const checkOrder = () => {
+  const checkOrder = async() => {
+    await initialPayment(Math.floor(total * 100))
+    const payed = await openPaymentSheet()
+    if(!payed) return;
     insertOrder(
       {
         total,

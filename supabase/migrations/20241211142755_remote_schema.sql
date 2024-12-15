@@ -76,6 +76,10 @@ begin
 end;
 $$;
 
+-- trigger the function every time a user is created
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
 
 ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
 
@@ -164,6 +168,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "role" "text" DEFAULT 'USER'::"text" NOT NULL,
     CONSTRAINT "username_length" CHECK (("char_length"("username") >= 3))
 );
+
 
 
 ALTER TABLE "public"."profiles" OWNER TO "postgres";

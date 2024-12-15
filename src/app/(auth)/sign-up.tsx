@@ -1,6 +1,6 @@
 import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
 import React, { useState } from 'react';
-import { object, string, StringSchema } from 'yup';
+import { object, string } from 'yup';
 import { Formik } from 'formik';
 import { Button } from '@/src/components/Button';
 import { router } from 'expo-router';
@@ -23,11 +23,13 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const handleSignUp = async (values: { email: string; password: string }) => {
     try {
-      setLoading(true);
+
+      setLoading(true);  
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
       });
+      
       if (error) Alert.alert(error.message);
     } catch (error) {
       throw new Error(error as string);
@@ -97,5 +99,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
-const styles = StyleSheet.create({});
