@@ -8,6 +8,7 @@ import { CartProvider } from '../providers/CartProvider';
 import AuthProvider from '../providers/AuthProvider';
 import QueryProvider from '../providers/QueryProvider';
 import { StripeProvider } from '@stripe/stripe-react-native';
+import { NotificationsProvider } from '../providers/NotificationsProvider';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -33,11 +34,13 @@ export default function RootLayout() {
   return (
     <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''}>
       <AuthProvider>
-        <QueryProvider>
-          <CartProvider>
-            <RootLayoutNav />
-          </CartProvider>
-        </QueryProvider>
+        <NotificationsProvider>
+          <QueryProvider>
+            <CartProvider>
+              <RootLayoutNav />
+            </CartProvider>
+          </QueryProvider>
+        </NotificationsProvider>
       </AuthProvider>
     </StripeProvider>
   );

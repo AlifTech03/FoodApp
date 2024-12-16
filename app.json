@@ -38,6 +38,14 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.alphaalif.foodapp"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "cb2e2fe3-97be-4a61-9a69-20270942702a"
+      }
     }
   }
 }
